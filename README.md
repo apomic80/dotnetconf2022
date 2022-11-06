@@ -5,3 +5,4 @@ Demo of the session Modernize your WPF and Windows Forms application with Blazor
 Branches structure:
 
 - **start**: the initial project, a full framework windows forms and WPF application
+- **demo1**: porting apps to .NET 6 with .NET Upgrade Assistant
