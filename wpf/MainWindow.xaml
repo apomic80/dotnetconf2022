@@ -4,10 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:wpf"
+        xmlns:components="clr-namespace:wpf.Components"
+        xmlns:blazor="clr-namespace:Microsoft.AspNetCore.Components.WebView.Wpf;assembly=Microsoft.AspNetCore.Components.WebView.Wpf"
         mc:Ignorable="d"
         Title="Data Visualizer" Height="450" Width="800">
     <StackPanel>
         <Button Name="btnLoadData" Click="btnLoadData_Click">Load Data File</Button>
-        <DataGrid Name="dgData" AutoGenerateColumns="True" MinHeight="400" />
+        <DataGrid Name="dgData" AutoGenerateColumns="True" MinHeight="200" />
+        <blazor:BlazorWebView HostPage="wwwroot/index.html" Services="{StaticResource services}" MinHeight="200">
+            <blazor:BlazorWebView.RootComponents>
+                <blazor:RootComponent Selector="#app" ComponentType="{x:Type components:WeatherForecastsGridView}" />
+            </blazor:BlazorWebView.RootComponents>
+        </blazor:BlazorWebView>
     </StackPanel>
 </Window>

@@ -1,0 +1,63 @@
+﻿@using System.Windows.Forms
+@using System.IO
+@using System.Text
+@using System.Runtime.Serialization.Json
+@using winforms.Models
+
+<button @onclick="LoadData">Load Data File</button>
+
+@if(WeatherForecasts?.Count > 0)
+{
+    var props = WeatherForecasts[0].GetType().GetProperties();
+
+    <table>
+        <thead>
+            <tr>
+                @foreach (var prop in props)
+                {
+                    <th>@prop.Name</th>
+                }
+            </tr>
+        </thead>
+        @foreach (var item in WeatherForecasts)
+        {
+            <tr>
+                @foreach (var prop in props)
+                {
+                    <td>@prop.GetValue(item)</td>
+                }
+            </tr>
+        }
+    </table>
+}
+else
+{
+    <span>No Data available</span>
+}
+
+@code {
+
+    private List<WeatherForecast> WeatherForecasts { get; set; }
+
+    private void LoadData()
+    {
+        using (OpenFileDialog openFileDialog = new OpenFileDialog())
+        {
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string json = File.ReadAllText(openFileDialog.FileName);
+                using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(json)))
+                {
+                    var ser = new DataContractJsonSerializer(typeof(List<WeatherForecast>));
+                    var data = ser.ReadObject(ms) as List<WeatherForecast>;
+
+                    // dgwData.AutoGenerateColumns = true;
+                    // dgwData.DataSource = data;
+
+                    WeatherForecasts = data;
+                    ms.Close();
+                }
+            }
+        }
+    }
+}
