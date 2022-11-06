@@ -25,10 +25,13 @@ namespace wpf
     /// </summary>
     public partial class MainWindow : Window
     {
+        private AppState _appState = new();
+
         public MainWindow()
         {
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddWpfBlazorWebView();
+            serviceCollection.AddSingleton(_appState);
             Resources.Add("services", serviceCollection.BuildServiceProvider());
 
             InitializeComponent();
@@ -46,6 +49,9 @@ namespace wpf
                     var data = ser.ReadObject(ms) as List<WeatherForecast>;
                     dgData.AutoGenerateColumns = true;
                     dgData.ItemsSource = data;
+
+                    _appState.SetWeatherForecasts(data);
+
                     ms.Close();
                 }
             }

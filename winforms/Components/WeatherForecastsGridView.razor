@@ -2,9 +2,10 @@
 @using System.IO
 @using System.Text
 @using System.Runtime.Serialization.Json
+@using System.ComponentModel
 @using winforms.Models
-
-<button @onclick="LoadData">Load Data File</button>
+@using winforms.Services
+@inject PropertyChangeNotifier propertyChangeNotifier
 
 @if(WeatherForecasts?.Count > 0)
 {
@@ -37,27 +38,14 @@ else
 
 @code {
 
-    private List<WeatherForecast> WeatherForecasts { get; set; }
+    [Parameter]
+    public List<WeatherForecast> WeatherForecasts { get; set; }
 
-    private void LoadData()
+    protected override void OnInitialized()
     {
-        using (OpenFileDialog openFileDialog = new OpenFileDialog())
+        propertyChangeNotifier.PropertyChanged += (s, p) =>
         {
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                string json = File.ReadAllText(openFileDialog.FileName);
-                using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(json)))
-                {
-                    var ser = new DataContractJsonSerializer(typeof(List<WeatherForecast>));
-                    var data = ser.ReadObject(ms) as List<WeatherForecast>;
-
-                    // dgwData.AutoGenerateColumns = true;
-                    // dgwData.DataSource = data;
-
-                    WeatherForecasts = data;
-                    ms.Close();
-                }
-            }
-        }
+            if (p == "WeatherForecasts") StateHasChanged();
+        };
     }
 }
