@@ -1,10 +1,9 @@
-﻿@using System.Windows.Forms
-@using System.IO
-@using System.Text
-@using System.Runtime.Serialization.Json
-@using winforms.Models
-@using winforms.Services;
-@inject PropertyChangeNotifier propertyChangeNotifier
+﻿@using System.Runtime.Serialization.Json
+@using blzcomponents.Models
+@using blzcomponents.Services
+@inject IWeatherForecastDataService dataService
+
+<button @onclick="LoadData">Load Data File</button>
 
 @if (WeatherForecasts?.Count > 0)
 {
@@ -15,7 +14,7 @@
                 <tr>
                 @foreach (var prop in props)
                 {
-                            <th>@prop.Name</th>
+                    <th>@prop.Name</th>
                 }
                 </tr>
             </thead>
@@ -37,15 +36,11 @@ else
 
 @code {
 
-    [Parameter]
-    public List<WeatherForecast> WeatherForecasts { get; set; }
+    private List<WeatherForecast> WeatherForecasts { get; set; }
 
-    protected override void OnInitialized()
+    private async Task LoadData()
     {
-        propertyChangeNotifier.PropertyChanged += (s, p) =>
-        {
-            if (p == "WeatherForecasts") StateHasChanged();
-        };
+        WeatherForecasts = await dataService.GetWeatherForecastsAsync();
     }
 
 }

@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Components.WebView.WindowsForms;
+﻿using blzcomponents.Components;
+using blzcomponents.Models;
+using blzcomponents.Services;
+using Microsoft.AspNetCore.Components.WebView.WindowsForms;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -8,30 +11,23 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using winforms.Components;
-using winforms.Models;
 using winforms.Services;
 
 namespace winforms
 {
     public partial class frmDataVisualizer : Form
     {
-        private List<WeatherForecast> _weatherForecasts = new();
-        private PropertyChangeNotifier _propertyChangeNotifier = new();
 
         public frmDataVisualizer()
         {
             InitializeComponent();
 
             var serviceCollection = new ServiceCollection();
-            serviceCollection.AddSingleton(_propertyChangeNotifier);
+            serviceCollection.AddSingleton<IWeatherForecastDataService, WeatherForecastDataService>();
             serviceCollection.AddWindowsFormsBlazorWebView();
             blazorWebView1.HostPage = "wwwroot/index.html";
             blazorWebView1.Services = serviceCollection.BuildServiceProvider();
-            blazorWebView1.RootComponents.Add<WeatherForecastGridView>("#app",
-                new Dictionary<string, object> { 
-                    { "WeatherForecasts", _weatherForecasts } 
-                });
+            blazorWebView1.RootComponents.Add<WeatherForecastGridView>("#app");
         }
 
         private void btnLoadFile_Click(object sender, EventArgs e)
@@ -47,12 +43,6 @@ namespace winforms
                         var data = ser.ReadObject(ms) as List<WeatherForecast>;
                         dgwData.AutoGenerateColumns = true;
                         dgwData.DataSource = data;
-
-                        _weatherForecasts.Clear();
-                        _weatherForecasts.AddRange(data);
-                        _propertyChangeNotifier.NotifyPropertyChange("WeatherForecasts");
-
-
                         ms.Close();
                     }
                 }

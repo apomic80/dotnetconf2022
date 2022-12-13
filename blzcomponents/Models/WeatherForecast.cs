@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace winforms.Models
+namespace blzcomponents.Models
 {
     [DataContract]
     public class WeatherForecast
