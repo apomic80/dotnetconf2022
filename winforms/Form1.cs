@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Components.WebView.WindowsForms;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -6,6 +8,7 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using winforms.Components;
 using winforms.Models;
 
 namespace winforms
@@ -15,6 +18,12 @@ namespace winforms
         public frmDataVisualizer()
         {
             InitializeComponent();
+
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddWindowsFormsBlazorWebView();
+            blazorWebView1.HostPage = "wwwroot/index.html";
+            blazorWebView1.Services = serviceCollection.BuildServiceProvider();
+            blazorWebView1.RootComponents.Add<WeatherForecastGridView>("#app");
         }
 
         private void btnLoadFile_Click(object sender, EventArgs e)
